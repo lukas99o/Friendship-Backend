@@ -2,9 +2,9 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Vänskap_Api.Data;
 
 #nullable disable
@@ -12,42 +12,41 @@ using Vänskap_Api.Data;
 namespace Vänskap_Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250923093556_ConversationEventFK")]
-    partial class ConversationEventFK
+    [Migration("20260521133455_InitPostgres")]
+    partial class InitPostgres
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.19")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("ProductVersion", "8.0.27")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
+                        .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles", (string)null);
                 });
@@ -56,19 +55,19 @@ namespace Vänskap_Api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("RoleId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -81,19 +80,19 @@ namespace Vänskap_Api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -105,17 +104,17 @@ namespace Vänskap_Api.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ProviderDisplayName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -127,10 +126,10 @@ namespace Vänskap_Api.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("RoleId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -142,16 +141,16 @@ namespace Vänskap_Api.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Value")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
@@ -161,71 +160,83 @@ namespace Vänskap_Api.Migrations
             modelBuilder.Entity("Vänskap_Api.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
+
+                    b.Property<string>("About")
+                        .HasColumnType("text");
 
                     b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateOnly>("DateOfBirth")
                         .HasColumnType("date");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<int?>("InterestId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("LastProfilePictureUpload")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("ProfilePicturePath")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ProfilePictureUploadCountToday")
+                        .HasColumnType("integer");
 
                     b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
 
@@ -236,8 +247,7 @@ namespace Vänskap_Api.Migrations
 
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+                        .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
                 });
@@ -246,25 +256,24 @@ namespace Vänskap_Api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int?>("EventId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
                     b.HasIndex("EventId")
-                        .IsUnique()
-                        .HasFilter("[EventId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("Conversations");
                 });
@@ -273,23 +282,23 @@ namespace Vänskap_Api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ConversationId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("JoinedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Role")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -304,50 +313,56 @@ namespace Vänskap_Api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("AgeRangeMax")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("AgeRangeMin")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("ConversationId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreatedByUserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("EndTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("ImageUpdateCountToday")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Img")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<int?>("InterestId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsPublic")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("LastImageUpdate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Location")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -361,10 +376,10 @@ namespace Vänskap_Api.Migrations
             modelBuilder.Entity("Vänskap_Api.Models.EventInterest", b =>
                 {
                     b.Property<int>("EventId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("InterestId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("EventId", "InterestId");
 
@@ -377,23 +392,23 @@ namespace Vänskap_Api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("EventId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("JoinedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Role")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -408,20 +423,20 @@ namespace Vänskap_Api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ReceiverId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("SenderId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -436,23 +451,23 @@ namespace Vänskap_Api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("FriendId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -469,13 +484,13 @@ namespace Vänskap_Api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -485,42 +500,42 @@ namespace Vänskap_Api.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "Matlagning"
+                            Name = "Cooking"
                         },
                         new
                         {
                             Id = 2,
-                            Name = "Resor"
+                            Name = "Travel"
                         },
                         new
                         {
                             Id = 3,
-                            Name = "Fotografi"
+                            Name = "Photography"
                         },
                         new
                         {
                             Id = 4,
-                            Name = "Träning"
+                            Name = "Fitness"
                         },
                         new
                         {
                             Id = 5,
-                            Name = "Löpning"
+                            Name = "Running"
                         },
                         new
                         {
                             Id = 6,
-                            Name = "Vandring"
+                            Name = "Hiking"
                         },
                         new
                         {
                             Id = 7,
-                            Name = "Cykling"
+                            Name = "Cycling"
                         },
                         new
                         {
                             Id = 8,
-                            Name = "Simning"
+                            Name = "Swimming"
                         },
                         new
                         {
@@ -530,182 +545,182 @@ namespace Vänskap_Api.Migrations
                         new
                         {
                             Id = 10,
-                            Name = "Musik"
+                            Name = "Music"
                         },
                         new
                         {
                             Id = 11,
-                            Name = "Dans"
+                            Name = "Dance"
                         },
                         new
                         {
                             Id = 12,
-                            Name = "Måla"
+                            Name = "Painting"
                         },
                         new
                         {
                             Id = 13,
-                            Name = "Teckna"
+                            Name = "Drawing"
                         },
                         new
                         {
                             Id = 14,
-                            Name = "Skriva"
+                            Name = "Writing"
                         },
                         new
                         {
                             Id = 15,
-                            Name = "Läsa böcker"
+                            Name = "Reading Books"
                         },
                         new
                         {
                             Id = 16,
-                            Name = "Spela gitarr"
+                            Name = "Playing Guitar"
                         },
                         new
                         {
                             Id = 17,
-                            Name = "Spela piano"
+                            Name = "Playing Piano"
                         },
                         new
                         {
                             Id = 18,
-                            Name = "Programmering"
+                            Name = "Programming"
                         },
                         new
                         {
                             Id = 19,
-                            Name = "Trädgårdsarbete"
+                            Name = "Gardening"
                         },
                         new
                         {
                             Id = 20,
-                            Name = "Fiske"
+                            Name = "Fishing"
                         },
                         new
                         {
                             Id = 21,
-                            Name = "Jakt"
+                            Name = "Hunting"
                         },
                         new
                         {
                             Id = 22,
-                            Name = "Baka"
+                            Name = "Baking"
                         },
                         new
                         {
                             Id = 23,
-                            Name = "Mode"
+                            Name = "Fashion"
                         },
                         new
                         {
                             Id = 24,
-                            Name = "Inredning"
+                            Name = "Interior Design"
                         },
                         new
                         {
                             Id = 25,
-                            Name = "Filmer"
+                            Name = "Movies"
                         },
                         new
                         {
                             Id = 26,
-                            Name = "Serier"
+                            Name = "TV Series"
                         },
                         new
                         {
                             Id = 27,
-                            Name = "Podcast"
+                            Name = "Podcasts"
                         },
                         new
                         {
                             Id = 28,
-                            Name = "Bilar"
+                            Name = "Cars"
                         },
                         new
                         {
                             Id = 29,
-                            Name = "Motorcyklar"
+                            Name = "Motorcycles"
                         },
                         new
                         {
                             Id = 30,
-                            Name = "Djur"
+                            Name = "Animals"
                         },
                         new
                         {
                             Id = 31,
-                            Name = "Hundar"
+                            Name = "Dogs"
                         },
                         new
                         {
                             Id = 32,
-                            Name = "Katter"
+                            Name = "Cats"
                         },
                         new
                         {
                             Id = 33,
-                            Name = "Volontärarbete"
+                            Name = "Volunteering"
                         },
                         new
                         {
                             Id = 34,
-                            Name = "Aktier"
+                            Name = "Stocks"
                         },
                         new
                         {
                             Id = 35,
-                            Name = "Investeringar"
+                            Name = "Investing"
                         },
                         new
                         {
                             Id = 36,
-                            Name = "Ekonomi"
+                            Name = "Economics"
                         },
                         new
                         {
                             Id = 37,
-                            Name = "Historia"
+                            Name = "History"
                         },
                         new
                         {
                             Id = 38,
-                            Name = "Psykologi"
+                            Name = "Psychology"
                         },
                         new
                         {
                             Id = 39,
-                            Name = "Filosofi"
+                            Name = "Philosophy"
                         },
                         new
                         {
                             Id = 40,
-                            Name = "Astronomi"
+                            Name = "Astronomy"
                         },
                         new
                         {
                             Id = 41,
-                            Name = "Vetenskap"
+                            Name = "Science"
                         },
                         new
                         {
                             Id = 42,
-                            Name = "Politik"
+                            Name = "Politics"
                         },
                         new
                         {
                             Id = 43,
-                            Name = "Miljöfrågor"
+                            Name = "Environmental Issues"
                         },
                         new
                         {
                             Id = 44,
-                            Name = "Debatt"
+                            Name = "Debate"
                         },
                         new
                         {
                             Id = 45,
-                            Name = "Självutveckling"
+                            Name = "Self-Development"
                         },
                         new
                         {
@@ -720,17 +735,17 @@ namespace Vänskap_Api.Migrations
                         new
                         {
                             Id = 48,
-                            Name = "Skidåkning"
+                            Name = "Skiing"
                         },
                         new
                         {
                             Id = 49,
-                            Name = "Snowboard"
+                            Name = "Snowboarding"
                         },
                         new
                         {
                             Id = 50,
-                            Name = "Segling"
+                            Name = "Sailing"
                         },
                         new
                         {
@@ -745,12 +760,12 @@ namespace Vänskap_Api.Migrations
                         new
                         {
                             Id = 53,
-                            Name = "Fotboll"
+                            Name = "Football"
                         },
                         new
                         {
                             Id = 54,
-                            Name = "Basket"
+                            Name = "Basketball"
                         },
                         new
                         {
@@ -765,32 +780,32 @@ namespace Vänskap_Api.Migrations
                         new
                         {
                             Id = 57,
-                            Name = "Baseboll"
+                            Name = "Baseball"
                         },
                         new
                         {
                             Id = 58,
-                            Name = "Esport"
+                            Name = "Esports"
                         },
                         new
                         {
                             Id = 59,
-                            Name = "Brädspel"
+                            Name = "Board Games"
                         },
                         new
                         {
                             Id = 60,
-                            Name = "Schack"
+                            Name = "Chess"
                         },
                         new
                         {
                             Id = 61,
-                            Name = "Kortspel"
+                            Name = "Card Games"
                         },
                         new
                         {
                             Id = 62,
-                            Name = "Rollspel"
+                            Name = "Role-Playing Games"
                         },
                         new
                         {
@@ -800,7 +815,7 @@ namespace Vänskap_Api.Migrations
                         new
                         {
                             Id = 64,
-                            Name = "Roadtrips"
+                            Name = "Road Trips"
                         },
                         new
                         {
@@ -810,27 +825,27 @@ namespace Vänskap_Api.Migrations
                         new
                         {
                             Id = 66,
-                            Name = "Språk"
+                            Name = "Languages"
                         },
                         new
                         {
                             Id = 67,
-                            Name = "Kultur"
+                            Name = "Culture"
                         },
                         new
                         {
                             Id = 68,
-                            Name = "Matkultur"
+                            Name = "Food Culture"
                         },
                         new
                         {
                             Id = 69,
-                            Name = "Brygga öl"
+                            Name = "Brewing Beer"
                         },
                         new
                         {
                             Id = 70,
-                            Name = "Vinprovning"
+                            Name = "Wine Tasting"
                         },
                         new
                         {
@@ -840,12 +855,12 @@ namespace Vänskap_Api.Migrations
                         new
                         {
                             Id = 72,
-                            Name = "Kaffe"
+                            Name = "Coffee"
                         },
                         new
                         {
                             Id = 73,
-                            Name = "Teknik"
+                            Name = "Technology"
                         },
                         new
                         {
@@ -855,22 +870,22 @@ namespace Vänskap_Api.Migrations
                         new
                         {
                             Id = 75,
-                            Name = "Spelutveckling"
+                            Name = "Game Development"
                         },
                         new
                         {
                             Id = 76,
-                            Name = "Webbutveckling"
+                            Name = "Web Development"
                         },
                         new
                         {
                             Id = 77,
-                            Name = "Mobilappar"
+                            Name = "Mobile Apps"
                         },
                         new
                         {
                             Id = 78,
-                            Name = "Entreprenörskap"
+                            Name = "Entrepreneurship"
                         },
                         new
                         {
@@ -880,12 +895,12 @@ namespace Vänskap_Api.Migrations
                         new
                         {
                             Id = 80,
-                            Name = "Marknadsföring"
+                            Name = "Marketing"
                         },
                         new
                         {
                             Id = 81,
-                            Name = "Sociala medier"
+                            Name = "Social Media"
                         },
                         new
                         {
@@ -900,7 +915,7 @@ namespace Vänskap_Api.Migrations
                         new
                         {
                             Id = 84,
-                            Name = "Standup"
+                            Name = "Stand-up Comedy"
                         },
                         new
                         {
@@ -910,32 +925,32 @@ namespace Vänskap_Api.Migrations
                         new
                         {
                             Id = 86,
-                            Name = "Skådespeleri"
+                            Name = "Acting"
                         },
                         new
                         {
                             Id = 87,
-                            Name = "Teater"
+                            Name = "Theatre"
                         },
                         new
                         {
                             Id = 88,
-                            Name = "Konst"
+                            Name = "Art"
                         },
                         new
                         {
                             Id = 89,
-                            Name = "Museer"
+                            Name = "Museums"
                         },
                         new
                         {
                             Id = 90,
-                            Name = "Arkitektur"
+                            Name = "Architecture"
                         },
                         new
                         {
                             Id = 91,
-                            Name = "Modefotografi"
+                            Name = "Fashion Photography"
                         },
                         new
                         {
@@ -945,12 +960,12 @@ namespace Vänskap_Api.Migrations
                         new
                         {
                             Id = 93,
-                            Name = "Antikviteter"
+                            Name = "Antiques"
                         },
                         new
                         {
                             Id = 94,
-                            Name = "Loppis"
+                            Name = "Flea Markets"
                         },
                         new
                         {
@@ -960,22 +975,22 @@ namespace Vänskap_Api.Migrations
                         new
                         {
                             Id = 96,
-                            Name = "Zero waste"
+                            Name = "Zero Waste"
                         },
                         new
                         {
                             Id = 97,
-                            Name = "DIY-projekt"
+                            Name = "DIY Projects"
                         },
                         new
                         {
                             Id = 98,
-                            Name = "Snickeri"
+                            Name = "Woodworking"
                         },
                         new
                         {
                             Id = 99,
-                            Name = "Keramik"
+                            Name = "Ceramics"
                         },
                         new
                         {
@@ -988,23 +1003,23 @@ namespace Vänskap_Api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<int>("ConversationId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("SenderId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -1019,18 +1034,18 @@ namespace Vänskap_Api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("MessageId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("ReadAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -1044,10 +1059,10 @@ namespace Vänskap_Api.Migrations
             modelBuilder.Entity("Vänskap_Api.Models.UserInterest", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<int>("InterestId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("UserId", "InterestId");
 

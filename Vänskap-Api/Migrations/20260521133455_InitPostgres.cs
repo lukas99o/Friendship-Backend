@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -8,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Vänskap_Api.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class InitPostgres : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,10 +18,10 @@ namespace Vänskap_Api.Migrations
                 name: "AspNetRoles",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    NormalizedName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -28,27 +29,12 @@ namespace Vänskap_Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Conversations",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EventId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Conversations", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Interests",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -59,11 +45,11 @@ namespace Vänskap_Api.Migrations
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    RoleId = table.Column<string>(type: "text", nullable: false),
+                    ClaimType = table.Column<string>(type: "text", nullable: true),
+                    ClaimValue = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -80,26 +66,30 @@ namespace Vänskap_Api.Migrations
                 name: "AspNetUsers",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    FirstName = table.Column<string>(type: "text", nullable: false),
+                    LastName = table.Column<string>(type: "text", nullable: false),
                     DateOfBirth = table.Column<DateOnly>(type: "date", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    InterestId = table.Column<int>(type: "int", nullable: true),
-                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
+                    About = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ProfilePicturePath = table.Column<string>(type: "text", nullable: true),
+                    LastProfilePictureUpload = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ProfilePictureUploadCountToday = table.Column<int>(type: "integer", nullable: false),
+                    InterestId = table.Column<int>(type: "integer", nullable: true),
+                    UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    PasswordHash = table.Column<string>(type: "text", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "text", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "text", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -115,11 +105,11 @@ namespace Vänskap_Api.Migrations
                 name: "AspNetUserClaims",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    ClaimType = table.Column<string>(type: "text", nullable: true),
+                    ClaimValue = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -136,10 +126,10 @@ namespace Vänskap_Api.Migrations
                 name: "AspNetUserLogins",
                 columns: table => new
                 {
-                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    LoginProvider = table.Column<string>(type: "text", nullable: false),
+                    ProviderKey = table.Column<string>(type: "text", nullable: false),
+                    ProviderDisplayName = table.Column<string>(type: "text", nullable: true),
+                    UserId = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -156,8 +146,8 @@ namespace Vänskap_Api.Migrations
                 name: "AspNetUserRoles",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    RoleId = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -180,10 +170,10 @@ namespace Vänskap_Api.Migrations
                 name: "AspNetUserTokens",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    LoginProvider = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Value = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -197,52 +187,26 @@ namespace Vänskap_Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ConversationParticipants",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    JoinedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ConversationId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ConversationParticipants", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ConversationParticipants_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ConversationParticipants_Conversations_ConversationId",
-                        column: x => x.ConversationId,
-                        principalTable: "Conversations",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Events",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Location = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AgeRangeMin = table.Column<int>(type: "int", nullable: true),
-                    AgeRangeMax = table.Column<int>(type: "int", nullable: true),
-                    IsPublic = table.Column<bool>(type: "bit", nullable: false),
-                    StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Img = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedByUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ConversationId = table.Column<int>(type: "int", nullable: false),
-                    InterestId = table.Column<int>(type: "int", nullable: true)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Title = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    Location = table.Column<string>(type: "text", nullable: true),
+                    AgeRangeMin = table.Column<int>(type: "integer", nullable: true),
+                    AgeRangeMax = table.Column<int>(type: "integer", nullable: true),
+                    IsPublic = table.Column<bool>(type: "boolean", nullable: false),
+                    StartTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    EndTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Img = table.Column<string>(type: "text", nullable: true),
+                    CreatedByUserId = table.Column<string>(type: "text", nullable: false),
+                    ConversationId = table.Column<int>(type: "integer", nullable: false),
+                    LastImageUpdate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ImageUpdateCountToday = table.Column<int>(type: "integer", nullable: false),
+                    InterestId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -251,12 +215,6 @@ namespace Vänskap_Api.Migrations
                         name: "FK_Events_AspNetUsers_CreatedByUserId",
                         column: x => x.CreatedByUserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Events_Conversations_ConversationId",
-                        column: x => x.ConversationId,
-                        principalTable: "Conversations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -270,11 +228,11 @@ namespace Vänskap_Api.Migrations
                 name: "FriendRequests",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    SenderId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ReceiverId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    SenderId = table.Column<string>(type: "text", nullable: false),
+                    ReceiverId = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -297,12 +255,12 @@ namespace Vänskap_Api.Migrations
                 name: "Friendships",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    FriendId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    FriendId = table.Column<string>(type: "text", nullable: false),
+                    ApplicationUserId = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -327,39 +285,11 @@ namespace Vänskap_Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Messages",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ConversationId = table.Column<int>(type: "int", nullable: false),
-                    SenderId = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Messages", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Messages_AspNetUsers_SenderId",
-                        column: x => x.SenderId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Messages_Conversations_ConversationId",
-                        column: x => x.ConversationId,
-                        principalTable: "Conversations",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "UserInterest",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    InterestId = table.Column<int>(type: "int", nullable: false)
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    InterestId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -379,11 +309,32 @@ namespace Vänskap_Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Conversations",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Title = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    EventId = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Conversations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Conversations_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "EventInterest",
                 columns: table => new
                 {
-                    EventId = table.Column<int>(type: "int", nullable: false),
-                    InterestId = table.Column<int>(type: "int", nullable: false)
+                    EventId = table.Column<int>(type: "integer", nullable: false),
+                    InterestId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -406,12 +357,12 @@ namespace Vänskap_Api.Migrations
                 name: "EventParticipants",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    JoinedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    EventId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    JoinedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Role = table.Column<string>(type: "text", nullable: false),
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    EventId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -431,14 +382,70 @@ namespace Vänskap_Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ConversationParticipants",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    JoinedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Role = table.Column<string>(type: "text", nullable: false),
+                    ConversationId = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ConversationParticipants", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ConversationParticipants_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ConversationParticipants_Conversations_ConversationId",
+                        column: x => x.ConversationId,
+                        principalTable: "Conversations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Messages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Content = table.Column<string>(type: "text", nullable: false),
+                    ConversationId = table.Column<int>(type: "integer", nullable: false),
+                    SenderId = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Messages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Messages_AspNetUsers_SenderId",
+                        column: x => x.SenderId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Messages_Conversations_ConversationId",
+                        column: x => x.ConversationId,
+                        principalTable: "Conversations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "MessageReadAt",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ReadAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    MessageId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ReadAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UserId = table.Column<string>(type: "text", nullable: true),
+                    MessageId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -461,105 +468,105 @@ namespace Vänskap_Api.Migrations
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
-                    { 1, "Matlagning" },
-                    { 2, "Resor" },
-                    { 3, "Fotografi" },
-                    { 4, "Träning" },
-                    { 5, "Löpning" },
-                    { 6, "Vandring" },
-                    { 7, "Cykling" },
-                    { 8, "Simning" },
+                    { 1, "Cooking" },
+                    { 2, "Travel" },
+                    { 3, "Photography" },
+                    { 4, "Fitness" },
+                    { 5, "Running" },
+                    { 6, "Hiking" },
+                    { 7, "Cycling" },
+                    { 8, "Swimming" },
                     { 9, "Yoga" },
-                    { 10, "Musik" },
-                    { 11, "Dans" },
-                    { 12, "Måla" },
-                    { 13, "Teckna" },
-                    { 14, "Skriva" },
-                    { 15, "Läsa böcker" },
-                    { 16, "Spela gitarr" },
-                    { 17, "Spela piano" },
-                    { 18, "Programmering" },
-                    { 19, "Trädgårdsarbete" },
-                    { 20, "Fiske" },
-                    { 21, "Jakt" },
-                    { 22, "Baka" },
-                    { 23, "Mode" },
-                    { 24, "Inredning" },
-                    { 25, "Filmer" },
-                    { 26, "Serier" },
-                    { 27, "Podcast" },
-                    { 28, "Bilar" },
-                    { 29, "Motorcyklar" },
-                    { 30, "Djur" },
-                    { 31, "Hundar" },
-                    { 32, "Katter" },
-                    { 33, "Volontärarbete" },
-                    { 34, "Aktier" },
-                    { 35, "Investeringar" },
-                    { 36, "Ekonomi" },
-                    { 37, "Historia" },
-                    { 38, "Psykologi" },
-                    { 39, "Filosofi" },
-                    { 40, "Astronomi" },
-                    { 41, "Vetenskap" },
-                    { 42, "Politik" },
-                    { 43, "Miljöfrågor" },
-                    { 44, "Debatt" },
-                    { 45, "Självutveckling" },
+                    { 10, "Music" },
+                    { 11, "Dance" },
+                    { 12, "Painting" },
+                    { 13, "Drawing" },
+                    { 14, "Writing" },
+                    { 15, "Reading Books" },
+                    { 16, "Playing Guitar" },
+                    { 17, "Playing Piano" },
+                    { 18, "Programming" },
+                    { 19, "Gardening" },
+                    { 20, "Fishing" },
+                    { 21, "Hunting" },
+                    { 22, "Baking" },
+                    { 23, "Fashion" },
+                    { 24, "Interior Design" },
+                    { 25, "Movies" },
+                    { 26, "TV Series" },
+                    { 27, "Podcasts" },
+                    { 28, "Cars" },
+                    { 29, "Motorcycles" },
+                    { 30, "Animals" },
+                    { 31, "Dogs" },
+                    { 32, "Cats" },
+                    { 33, "Volunteering" },
+                    { 34, "Stocks" },
+                    { 35, "Investing" },
+                    { 36, "Economics" },
+                    { 37, "History" },
+                    { 38, "Psychology" },
+                    { 39, "Philosophy" },
+                    { 40, "Astronomy" },
+                    { 41, "Science" },
+                    { 42, "Politics" },
+                    { 43, "Environmental Issues" },
+                    { 44, "Debate" },
+                    { 45, "Self-Development" },
                     { 46, "Meditation" },
                     { 47, "Mindfulness" },
-                    { 48, "Skidåkning" },
-                    { 49, "Snowboard" },
-                    { 50, "Segling" },
+                    { 48, "Skiing" },
+                    { 49, "Snowboarding" },
+                    { 50, "Sailing" },
                     { 51, "Surfing" },
                     { 52, "Golf" },
-                    { 53, "Fotboll" },
-                    { 54, "Basket" },
+                    { 53, "Football" },
+                    { 54, "Basketball" },
                     { 55, "Tennis" },
                     { 56, "Padel" },
-                    { 57, "Baseboll" },
-                    { 58, "Esport" },
-                    { 59, "Brädspel" },
-                    { 60, "Schack" },
-                    { 61, "Kortspel" },
-                    { 62, "Rollspel" },
+                    { 57, "Baseball" },
+                    { 58, "Esports" },
+                    { 59, "Board Games" },
+                    { 60, "Chess" },
+                    { 61, "Card Games" },
+                    { 62, "Role-Playing Games" },
                     { 63, "Camping" },
-                    { 64, "Roadtrips" },
+                    { 64, "Road Trips" },
                     { 65, "Backpacking" },
-                    { 66, "Språk" },
-                    { 67, "Kultur" },
-                    { 68, "Matkultur" },
-                    { 69, "Brygga öl" },
-                    { 70, "Vinprovning" },
+                    { 66, "Languages" },
+                    { 67, "Culture" },
+                    { 68, "Food Culture" },
+                    { 69, "Brewing Beer" },
+                    { 70, "Wine Tasting" },
                     { 71, "Cocktails" },
-                    { 72, "Kaffe" },
-                    { 73, "Teknik" },
+                    { 72, "Coffee" },
+                    { 73, "Technology" },
                     { 74, "AI" },
-                    { 75, "Spelutveckling" },
-                    { 76, "Webbutveckling" },
-                    { 77, "Mobilappar" },
-                    { 78, "Entreprenörskap" },
+                    { 75, "Game Development" },
+                    { 76, "Web Development" },
+                    { 77, "Mobile Apps" },
+                    { 78, "Entrepreneurship" },
                     { 79, "Startups" },
-                    { 80, "Marknadsföring" },
-                    { 81, "Sociala medier" },
+                    { 80, "Marketing" },
+                    { 81, "Social Media" },
                     { 82, "YouTube" },
                     { 83, "Streaming" },
-                    { 84, "Standup" },
+                    { 84, "Stand-up Comedy" },
                     { 85, "Improvisation" },
-                    { 86, "Skådespeleri" },
-                    { 87, "Teater" },
-                    { 88, "Konst" },
-                    { 89, "Museer" },
-                    { 90, "Arkitektur" },
-                    { 91, "Modefotografi" },
+                    { 86, "Acting" },
+                    { 87, "Theatre" },
+                    { 88, "Art" },
+                    { 89, "Museums" },
+                    { 90, "Architecture" },
+                    { 91, "Fashion Photography" },
                     { 92, "Vintage" },
-                    { 93, "Antikviteter" },
-                    { 94, "Loppis" },
+                    { 93, "Antiques" },
+                    { 94, "Flea Markets" },
                     { 95, "Minimalism" },
-                    { 96, "Zero waste" },
-                    { 97, "DIY-projekt" },
-                    { 98, "Snickeri" },
-                    { 99, "Keramik" },
+                    { 96, "Zero Waste" },
+                    { 97, "DIY Projects" },
+                    { 98, "Woodworking" },
+                    { 99, "Ceramics" },
                     { 100, "Origami" }
                 });
 
@@ -572,8 +579,7 @@ namespace Vänskap_Api.Migrations
                 name: "RoleNameIndex",
                 table: "AspNetRoles",
                 column: "NormalizedName",
-                unique: true,
-                filter: "[NormalizedName] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserClaims_UserId",
@@ -604,8 +610,7 @@ namespace Vänskap_Api.Migrations
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
-                unique: true,
-                filter: "[NormalizedUserName] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_ConversationParticipants_ConversationId",
@@ -616,6 +621,12 @@ namespace Vänskap_Api.Migrations
                 name: "IX_ConversationParticipants_UserId",
                 table: "ConversationParticipants",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Conversations_EventId",
+                table: "Conversations",
+                column: "EventId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_EventInterest_InterestId",
@@ -631,12 +642,6 @@ namespace Vänskap_Api.Migrations
                 name: "IX_EventParticipants_UserId",
                 table: "EventParticipants",
                 column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Events_ConversationId",
-                table: "Events",
-                column: "ConversationId",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Events_CreatedByUserId",
@@ -742,16 +747,16 @@ namespace Vänskap_Api.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Events");
-
-            migrationBuilder.DropTable(
                 name: "Messages");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "Conversations");
 
             migrationBuilder.DropTable(
-                name: "Conversations");
+                name: "Events");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Interests");
