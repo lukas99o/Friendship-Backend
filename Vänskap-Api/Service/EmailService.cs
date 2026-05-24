@@ -19,20 +19,12 @@ namespace Vänskap_Api.Service
 
         public async Task SendEmailAsync(string toEmail, string subject, string htmlBody)
         {
-            var logoPath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "logo.png");
-            var logoBase64 = Convert.ToBase64String(await File.ReadAllBytesAsync(logoPath));
-
-            var inlinedHtmlBody = htmlBody.Replace(
-                "cid:LogoImage",
-                $"data:image/png;base64,{logoBase64}"
-            );
-
             var payload = new
             {
                 sender = new { email = "eventure@lukas99o.com" },
                 to = new[] { new { email = toEmail } },
                 subject,
-                htmlContent = inlinedHtmlBody
+                htmlContent = htmlBody
             };
 
             var json = JsonSerializer.Serialize(payload);
