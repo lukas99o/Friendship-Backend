@@ -64,8 +64,17 @@ namespace Vänskap_Api
                 c.OperationFilter<SwaggerFileOperationFilter>();
             });
 
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+                ?? Environment.GetEnvironmentVariable("ConnectionString");
+
+            if (string.IsNullOrWhiteSpace(connectionString))
+            {
+                throw new InvalidOperationException(
+                    "Missing database connection string. Set ConnectionStrings__DefaultConnection or ConnectionString in your environment/.env file.");
+            }
+
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+                options.UseNpgsql(connectionString));
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>().
                 AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
             builder.Services.Configure<IdentityOptions>(options =>
@@ -92,10 +101,13 @@ namespace Vänskap_Api
                 };
             });
 
-            builder.WebHost.ConfigureKestrel(serverOptions =>
+            if (builder.Environment.IsProduction())
             {
-                serverOptions.ListenAnyIP(8080);
-            });
+                builder.WebHost.ConfigureKestrel(serverOptions =>
+                {
+                    serverOptions.ListenAnyIP(8080);
+                });    
+            }
 
             builder.Services.AddSignalR();
             builder.Services.AddHttpClient<IEmailService, EmailService>();
@@ -136,7 +148,7 @@ namespace Vänskap_Api
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ SeedAdminAsync misslyckades eller SeedTestUsersAsync: {ex.Message}");
+                Console.WriteLine($"❌ Startup initialization failed (migration/seed): {ex.Message}");
             }
 
             await app.RunAsync();

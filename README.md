@@ -49,11 +49,11 @@ cd friendship-backend
 
 ### 2️⃣ Configure Enviroment Variables
 Create a file named .env and put these values: 
-- **ConnectionString=[your connection string]**
+- **ConnectionStrings__DefaultConnection=[your connection string]**
 - **JwtKey=[YourSuperDuperUltraSecretKey]**
 - **JwtIssuer=https://localhost:7106**
 - **JwtAudience=FriendshipAppAudience**
-- **http://localhost:5173**
+- **BaseUrl=http://localhost:7106**
 
 ### 3️⃣ Run Migrations
 Open package managaer console and run:
