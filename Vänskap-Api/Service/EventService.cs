@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Asn1;
-using Sprache;
-using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using Vänskap_Api.Data;
 using Vänskap_Api.Models;

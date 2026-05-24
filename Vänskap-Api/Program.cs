@@ -64,13 +64,12 @@ namespace Vänskap_Api
                 c.OperationFilter<SwaggerFileOperationFilter>();
             });
 
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-                ?? Environment.GetEnvironmentVariable("ConnectionString");
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
             if (string.IsNullOrWhiteSpace(connectionString))
             {
                 throw new InvalidOperationException(
-                    "Missing database connection string. Set ConnectionStrings__DefaultConnection or ConnectionString in your environment/.env file.");
+                    "Missing database connection string. Set ConnectionStrings__DefaultConnection.");
             }
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
