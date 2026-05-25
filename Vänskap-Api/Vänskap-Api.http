@@ -1,6 +1,68 @@
-@Vänskap_Api_HostAddress = http://localhost:5297
+@VanskapApi_HostAddress = http://localhost:5297
+@email = test.user@example.com
+@password = Password123!
+@username = testuser
+@authToken = REPLACE_WITH_JWT
 
-GET {{Vänskap_Api_HostAddress}}/weatherforecast/
-Accept: application/json
+### 1) Register user
+POST {{VanskapApi_HostAddress}}/api/Auth/Register
+Content-Type: application/json
 
-###
+{
+	"email": "{{email}}",
+	"password": "{{password}}",
+	"userName": "{{username}}",
+	"firstName": "Test",
+	"lastName": "User",
+	"dateOfBirth": "1998-05-20"
+}
+
+### 2) Login user
+POST {{VanskapApi_HostAddress}}/api/Auth/Login
+Content-Type: application/json
+
+{
+	"email": "{{email}}",
+	"password": "{{password}}"
+}
+
+### 3) Resend confirmation email
+POST {{VanskapApi_HostAddress}}/api/Auth/resend-email?email={{email}}
+
+### 4) Get public events with filters
+POST {{VanskapApi_HostAddress}}/api/Event/publicevents
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+	"interests": ["Photography", "Cooking"],
+	"ageMin": 18,
+	"ageMax": 45,
+	"page": 1,
+	"pageSize": 10,
+	"sort": "alphabetical"
+}
+
+### 5) Read a single event
+GET {{VanskapApi_HostAddress}}/api/Event/1
+Authorization: Bearer {{authToken}}
+
+### 6) Join event
+POST {{VanskapApi_HostAddress}}/api/Event/join/1
+Authorization: Bearer {{authToken}}
+
+### 7) Get my joined events
+GET {{VanskapApi_HostAddress}}/api/Event/my-joined-events
+Authorization: Bearer {{authToken}}
+
+### 8) Send friend request
+POST {{VanskapApi_HostAddress}}/api/Friendship/send-friend-request/{{username}}
+Authorization: Bearer {{authToken}}
+
+### 9) Start private conversation
+POST {{VanskapApi_HostAddress}}/api/Conversation/start-private-conversation/{{username}}
+Authorization: Bearer {{authToken}}
+
+### 10) Get user by id
+GET {{VanskapApi_HostAddress}}/api/User/REPLACE_WITH_USER_ID
+Authorization: Bearer {{authToken}}
