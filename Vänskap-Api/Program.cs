@@ -68,8 +68,16 @@ namespace Vänskap_Api
 
             if (string.IsNullOrWhiteSpace(connectionString))
             {
-                throw new InvalidOperationException(
-                    "Missing database connection string. Set ConnectionStrings__DefaultConnection.");
+                if (builder.Environment.IsEnvironment("Testing"))
+                {
+                    // Allows integration tests to boot; test factory replaces DbContext with InMemory provider.
+                    connectionString = "Host=localhost;Port=5432;Database=testing_placeholder;Username=test;Password=test";
+                }
+                else
+                {
+                    throw new InvalidOperationException(
+                        "Missing database connection string. Set ConnectionStrings__DefaultConnection.");
+                }
             }
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
