@@ -30,6 +30,7 @@
   <ItemGroup>
 	  <None Update="EmailTemplates\**\*">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 	  </None>
   </ItemGroup>
 

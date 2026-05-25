@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -17,12 +18,14 @@ namespace Vänskap_Api.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IEmailService _emailService;
+        private readonly string _confirmEmailTemplatePath;
 
-        public AuthController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IEmailService emailService)
+        public AuthController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IEmailService emailService, IWebHostEnvironment environment)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _emailService = emailService;
+            _confirmEmailTemplatePath = System.IO.Path.Combine(environment.ContentRootPath, "EmailTemplates", "ConfirmEmail.html");
         }
 
         [HttpPost("Login")]
@@ -96,7 +99,7 @@ namespace Vänskap_Api.Controllers
 
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var confirmationLink = $"{Environment.GetEnvironmentVariable("BaseUrl")}/confirm-email?userId={user.Id}&token={Uri.EscapeDataString(token)}";
-            var htmlTemplate = await System.IO.File.ReadAllTextAsync("EmailTemplates/ConfirmEmail.html");
+            var htmlTemplate = await System.IO.File.ReadAllTextAsync(_confirmEmailTemplatePath);
             var htmlBody = htmlTemplate
                 .Replace("{FirstName}", user.FirstName)
                 .Replace("{confirmationLink}", confirmationLink);
@@ -119,7 +122,7 @@ namespace Vänskap_Api.Controllers
             {
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 var confirmationLink = $"{Environment.GetEnvironmentVariable("BaseUrl")}/confirm-email?userId={user.Id}&token={Uri.EscapeDataString(token)}";
-                var htmlTemplate = await System.IO.File.ReadAllTextAsync("EmailTemplates/ConfirmEmail.html");
+                var htmlTemplate = await System.IO.File.ReadAllTextAsync(_confirmEmailTemplatePath);
                 var htmlBody = htmlTemplate
                     .Replace("{FirstName}", user.FirstName)
                     .Replace("{confirmationLink}", confirmationLink);
